@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Important pages
+Allow: /
+Allow: /games/*
+Allow: /tournaments
+Allow: /vip
+
+# Sitemap
+Sitemap: https://wrecklessracks.vercel.app/sitemap.xml
+
+# Crawl rate
+Crawl-delay: 1
