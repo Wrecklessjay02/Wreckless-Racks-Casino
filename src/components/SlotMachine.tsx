@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause } from 'lucide-react'
+import { Play, Pause, Share2 } from 'lucide-react'
+import SocialShare from './SocialShare'
 
 const SYMBOLS = ['🍒', '🍋', '🍊', '🍇', '⭐', '💎', '🎰', '💰']
 const REEL_COUNT = 3
@@ -18,6 +19,7 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
   const [isSpinning, setIsSpinning] = useState(false)
   const [lastWin, setLastWin] = useState<number>(0)
   const [spinResults, setSpinResults] = useState<string[]>([])
+  const [showShare, setShowShare] = useState(false)
 
   const getRandomSymbol = () => SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]
 
@@ -110,9 +112,21 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
             exit={{ scale: 0, opacity: 0 }}
             className="text-center"
           >
-            <div className="text-4xl font-bold text-yellow-400 animate-pulse">
+            <div className="text-3xl md:text-4xl font-bold text-yellow-400 animate-pulse mb-3">
               🎉 WIN! +{lastWin} coins 🎉
             </div>
+            {lastWin >= 250 && (
+              <motion.button
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.5 }}
+                onClick={() => setShowShare(true)}
+                className="flex items-center gap-2 mx-auto px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-full transition-all text-sm"
+              >
+                <Share2 size={16} />
+                Share Big Win!
+              </motion.button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -148,6 +162,16 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
           <p>🎰 = 150 | Others = 100 | Pairs = 25</p>
         </div>
       </div>
+
+      <SocialShare
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        shareData={{
+          title: `🎰 HUGE WIN at Wreckless Racks Casino!`,
+          description: `Just won ${lastWin.toLocaleString()} coins on Lucky Slots! 💰 Join me for free spins and big wins!`,
+          url: 'https://wrecklessracks.vercel.app'
+        }}
+      />
     </div>
   )
 }

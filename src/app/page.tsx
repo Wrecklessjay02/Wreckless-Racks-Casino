@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import GameLobby from '@/components/GameLobby'
 import SlotMachine from '@/components/SlotMachine'
+import MegaSlots from '@/components/MegaSlots'
 import Blackjack from '@/components/Blackjack'
 import Roulette from '@/components/Roulette'
 import Poker from '@/components/Poker'
@@ -10,9 +11,9 @@ import CurrencyStore from '@/components/CurrencyStore'
 import UserProfile from '@/components/UserProfile'
 import DailyBonus from '@/components/DailyBonus'
 import Tournament from '@/components/Tournament'
-import { Coins, User, Trophy, Gift, Home, Plus, Bell } from 'lucide-react'
+import { Coins, User, Trophy, Gift, Home, Plus, Bell, Users } from 'lucide-react'
 
-type GameType = 'lobby' | 'slots' | 'blackjack' | 'roulette' | 'poker'
+type GameType = 'lobby' | 'slots' | 'megaslots' | 'blackjack' | 'roulette' | 'poker'
 
 export default function CasinoPage() {
   const [coins, setCoins] = useState(5000)
@@ -27,6 +28,8 @@ export default function CasinoPage() {
     switch (currentGame) {
       case 'slots':
         return <SlotMachine coins={coins} setCoins={setCoins} />
+      case 'megaslots':
+        return <MegaSlots coins={coins} setCoins={setCoins} />
       case 'blackjack':
         return <Blackjack coins={coins} setCoins={setCoins} />
       case 'roulette':

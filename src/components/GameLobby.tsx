@@ -1,9 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Spade, DollarSign, Target, Diamond } from 'lucide-react'
+import { Spade, DollarSign, Target, Diamond, Users } from 'lucide-react'
 
-type GameType = 'lobby' | 'slots' | 'blackjack' | 'roulette' | 'poker'
+type GameType = 'lobby' | 'slots' | 'megaslots' | 'blackjack' | 'roulette' | 'poker'
 
 interface GameLobbyProps {
   onSelectGame: (game: GameType) => void
@@ -13,11 +13,21 @@ const games = [
   {
     id: 'slots' as GameType,
     title: 'Lucky Slots',
-    description: 'Spin the reels and hit the jackpot!',
+    description: 'Classic 3-reel slots with big wins!',
     icon: '🎰',
     gradient: 'from-purple-600 to-pink-600',
     minBet: 50,
     maxWin: '1,000x'
+  },
+  {
+    id: 'megaslots' as GameType,
+    title: 'MEGA SLOTS',
+    description: '5-reel progressive jackpot action!',
+    icon: '⚡',
+    gradient: 'from-purple-700 to-indigo-800',
+    minBet: 100,
+    maxWin: 'JACKPOT',
+    special: true
   },
   {
     id: 'blackjack' as GameType,
@@ -81,7 +91,12 @@ export default function GameLobby({ onSelectGame }: GameLobbyProps) {
             className="cursor-pointer"
             onClick={() => onSelectGame(game.id)}
           >
-            <div className={`bg-gradient-to-br ${game.gradient} p-4 md:p-6 rounded-2xl shadow-2xl border border-white/20 hover:border-yellow-400/50 transition-all duration-300 touch-manipulation`}>
+            <div className={`bg-gradient-to-br ${game.gradient} p-4 md:p-6 rounded-2xl shadow-2xl border ${(game as any).special ? 'border-yellow-500/70 shadow-yellow-500/20' : 'border-white/20'} hover:border-yellow-400/50 transition-all duration-300 touch-manipulation relative`}>
+              {(game as any).special && (
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-2 py-1 rounded-full animate-pulse">
+                  HOT!
+                </div>
+              )}
               <div className="text-center">
                 <div className="text-4xl md:text-6xl mb-3 md:mb-4">{game.icon}</div>
                 <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{game.title}</h3>
@@ -200,6 +215,17 @@ export default function GameLobby({ onSelectGame }: GameLobbyProps) {
             <p className="text-sm text-gray-300">Enhanced rewards for VIP</p>
           </div>
         </div>
+      </div>
+
+      {/* Footer with Providers Link */}
+      <div className="mt-8 text-center">
+        <a
+          href="/providers"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full transition-all transform hover:scale-105"
+        >
+          <Users size={20} />
+          Game Providers - Partner with Us
+        </a>
       </div>
     </div>
   )
