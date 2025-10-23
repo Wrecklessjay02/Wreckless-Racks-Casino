@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Spade, DollarSign, Target, Diamond, Users } from 'lucide-react'
+import { Spade, DollarSign, Target, Diamond, Users, Shield } from 'lucide-react'
+import ResponsibleGaming from './ResponsibleGaming'
 
 type GameType = 'lobby' | 'slots' | 'megaslots' | 'blackjack' | 'roulette' | 'poker'
 
@@ -59,6 +61,8 @@ const games = [
 ]
 
 export default function GameLobby({ onSelectGame }: GameLobbyProps) {
+  const [showResponsibleGaming, setShowResponsibleGaming] = useState(false)
+
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6">
       <div className="text-center mb-8 md:mb-12">
@@ -217,16 +221,35 @@ export default function GameLobby({ onSelectGame }: GameLobbyProps) {
         </div>
       </div>
 
-      {/* Footer with Providers Link */}
-      <div className="mt-8 text-center">
-        <a
-          href="/providers"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full transition-all transform hover:scale-105"
-        >
-          <Users size={20} />
-          Game Providers - Partner with Us
-        </a>
+      {/* Footer with Links */}
+      <div className="mt-8 text-center space-y-4">
+        <div className="flex flex-col md:flex-row gap-4 justify-center">
+          <a
+            href="/providers"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-full transition-all transform hover:scale-105"
+          >
+            <Users size={20} />
+            Game Providers - Partner with Us
+          </a>
+
+          <button
+            onClick={() => setShowResponsibleGaming(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-full transition-all transform hover:scale-105"
+          >
+            <Shield size={20} />
+            Responsible Gaming
+          </button>
+        </div>
+
+        <div className="text-center text-xs text-gray-500">
+          <p>🔞 Must be 21+ • 🔒 Virtual coins only • 🚫 No real money gambling</p>
+        </div>
       </div>
+
+      <ResponsibleGaming
+        isOpen={showResponsibleGaming}
+        onClose={() => setShowResponsibleGaming(false)}
+      />
     </div>
   )
 }

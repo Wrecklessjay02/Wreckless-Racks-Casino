@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Coins, Zap, Diamond, Crown, CreditCard, Smartphone } from 'lucide-react'
+import PaymentProcessor from './PaymentProcessor'
 
 interface CurrencyStoreProps {
   isOpen: boolean
@@ -63,16 +64,19 @@ const coinPackages = [
 ]
 
 export default function CurrencyStore({ isOpen, onClose, coins, setCoins }: CurrencyStoreProps) {
-  const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'apple' | 'google'>('card')
+  const [selectedPackage, setSelectedPackage] = useState<typeof coinPackages[0] | null>(null)
+  const [showPayment, setShowPayment] = useState(false)
 
-  const handlePurchase = (packageData: typeof coinPackages[0]) => {
-    const totalCoins = packageData.coins + packageData.bonus
+  const handlePurchaseClick = (packageData: typeof coinPackages[0]) => {
+    setSelectedPackage(packageData)
+    setShowPayment(true)
+  }
+
+  const handlePaymentSuccess = (totalCoins: number) => {
     setCoins(coins + totalCoins)
+    setShowPayment(false)
+    setSelectedPackage(null)
     onClose()
-
-    // In a real app, this would integrate with payment processors
-    alert(`Successfully purchased ${totalCoins.toLocaleString()} coins for $${packageData.price}!`)
   }
 
   if (!isOpen) return null
@@ -141,7 +145,7 @@ export default function CurrencyStore({ isOpen, onClose, coins, setCoins }: Curr
                 </div>
 
                 <button
-                  onClick={() => handlePurchase(pkg)}
+                  onClick={() => handlePurchaseClick(pkg)}
                   className={`w-full py-3 rounded-lg font-bold text-lg transition-all ${
                     pkg.popular
                       ? 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black'
@@ -155,52 +159,21 @@ export default function CurrencyStore({ isOpen, onClose, coins, setCoins }: Curr
           ))}
         </div>
 
-        <div className="border-t border-gray-700 pt-6">
-          <h3 className="text-xl font-bold text-white mb-4">Payment Methods</h3>
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={() => setPaymentMethod('card')}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
-                paymentMethod === 'card'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              }`}
-            >
-              <CreditCard size={20} />
-              Credit Card
-            </button>
-
-            <button
-              onClick={() => setPaymentMethod('apple')}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
-                paymentMethod === 'apple'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              }`}
-            >
-              <Smartphone size={20} />
-              Apple Pay
-            </button>
-
-            <button
-              onClick={() => setPaymentMethod('google')}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
-                paymentMethod === 'google'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              }`}
-            >
-              <Smartphone size={20} />
-              Google Pay
-            </button>
-          </div>
-        </div>
-
         <div className="mt-6 text-center text-sm text-gray-400">
           <p>🔒 Secure payments • No real money gambling • 21+ only</p>
           <p>Coins have no cash value and cannot be redeemed for real money</p>
         </div>
       </motion.div>
+
+      <PaymentProcessor
+        isOpen={showPayment}
+        onClose={() => {
+          setShowPayment(false)
+          setSelectedPackage(null)
+        }}
+        packageData={selectedPackage}
+        onSuccess={handlePaymentSuccess}
+      />
     </div>
   )
 }

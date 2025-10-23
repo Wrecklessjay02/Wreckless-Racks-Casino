@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import GameLobby from '@/components/GameLobby'
 import SlotMachine from '@/components/SlotMachine'
 import MegaSlots from '@/components/MegaSlots'
@@ -11,6 +11,7 @@ import CurrencyStore from '@/components/CurrencyStore'
 import UserProfile from '@/components/UserProfile'
 import DailyBonus from '@/components/DailyBonus'
 import Tournament from '@/components/Tournament'
+import AgeVerification from '@/components/AgeVerification'
 import { Coins, User, Trophy, Gift, Home, Plus, Bell, Users } from 'lucide-react'
 
 type GameType = 'lobby' | 'slots' | 'megaslots' | 'blackjack' | 'roulette' | 'poker'
@@ -23,6 +24,36 @@ export default function CasinoPage() {
   const [showDailyBonus, setShowDailyBonus] = useState(false)
   const [showTournament, setShowTournament] = useState(false)
   const [hasUnclaimedBonus, setHasUnclaimedBonus] = useState(true)
+  const [isAgeVerified, setIsAgeVerified] = useState(false)
+  const [showAgeVerification, setShowAgeVerification] = useState(false)
+
+  useEffect(() => {
+    // Check if user has already been age verified
+    const stored = localStorage.getItem('wreckless_racks_age_verified')
+    if (stored) {
+      const { verified, timestamp } = JSON.parse(stored)
+      const daysSinceVerification = (Date.now() - timestamp) / (1000 * 60 * 60 * 24)
+
+      // Require re-verification after 30 days
+      if (verified && daysSinceVerification < 30) {
+        setIsAgeVerified(true)
+      } else {
+        setShowAgeVerification(true)
+      }
+    } else {
+      setShowAgeVerification(true)
+    }
+  }, [])
+
+  const handleAgeVerified = () => {
+    setIsAgeVerified(true)
+    setShowAgeVerification(false)
+  }
+
+  const handleAgeVerificationClose = () => {
+    // Redirect to a safe page or show under-age message
+    window.location.href = 'https://www.usa.gov/youth'
+  }
 
   const renderGame = () => {
     switch (currentGame) {
@@ -39,6 +70,26 @@ export default function CasinoPage() {
       default:
         return <GameLobby onSelectGame={setCurrentGame} />
     }
+  }
+
+  // Don't render casino content until age is verified
+  if (!isAgeVerified) {
+    return (
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-red-900 via-black to-yellow-900 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-8xl mb-8 animate-spin">💸</div>
+            <h1 className="text-4xl font-bold text-yellow-400 mb-4">Wreckless Racks Casino</h1>
+            <p className="text-xl text-white">Loading your casino experience...</p>
+          </div>
+        </div>
+        <AgeVerification
+          isOpen={showAgeVerification}
+          onVerified={handleAgeVerified}
+          onClose={handleAgeVerificationClose}
+        />
+      </>
+    )
   }
 
   return (
