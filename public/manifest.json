@@ -1,0 +1,39 @@
+{
+  "name": "Wreckless Racks Casino",
+  "short_name": "Wreckless Racks",
+  "description": "Free Social Casino Games - Slots, Blackjack, Roulette & Poker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#eab308",
+  "orientation": "portrait-primary",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}

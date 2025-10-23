@@ -77,17 +77,17 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-8 p-8 bg-black/30 backdrop-blur-lg rounded-3xl border border-white/10 shadow-2xl">
+    <div className="flex flex-col items-center gap-4 md:gap-8 p-4 md:p-8 bg-black/30 backdrop-blur-lg rounded-3xl border border-white/10 shadow-2xl max-w-md md:max-w-none mx-auto">
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-white mb-2">Lucky Slots</h2>
-        <p className="text-gray-300">Bet: {BET_AMOUNT} coins per spin</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Lucky Slots</h2>
+        <p className="text-sm md:text-base text-gray-300">Bet: {BET_AMOUNT} coins per spin</p>
       </div>
 
-      <div className="flex gap-4 p-6 bg-black/50 rounded-2xl border-4 border-yellow-500">
+      <div className="flex gap-2 md:gap-4 p-4 md:p-6 bg-black/50 rounded-2xl border-4 border-yellow-500">
         {reels.map((symbol, index) => (
           <motion.div
             key={index}
-            className={`w-24 h-24 flex items-center justify-center text-4xl rounded-xl border-2 border-white/20 ${getSymbolVariant(symbol)}`}
+            className={`w-16 h-16 md:w-24 md:h-24 flex items-center justify-center text-2xl md:text-4xl rounded-xl border-2 border-white/20 ${getSymbolVariant(symbol)}`}
             animate={isSpinning ? { rotateY: [0, 360] } : {}}
             transition={{ duration: 0.1, repeat: isSpinning ? Infinity : 0 }}
           >
@@ -120,31 +120,33 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
       <button
         onClick={spin}
         disabled={isSpinning || coins < BET_AMOUNT}
-        className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-black font-bold text-xl rounded-full transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
+        className="flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-black font-bold text-lg md:text-xl rounded-full transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg touch-manipulation"
       >
         {isSpinning ? (
           <>
-            <Pause size={24} />
-            Spinning...
+            <Pause size={20} className="md:w-6 md:h-6" />
+            <span className="text-sm md:text-base">Spinning...</span>
           </>
         ) : (
           <>
-            <Play size={24} />
-            Spin ({BET_AMOUNT} coins)
+            <Play size={20} className="md:w-6 md:h-6" />
+            <span className="text-sm md:text-base">Spin ({BET_AMOUNT} coins)</span>
           </>
         )}
       </button>
 
       {coins < BET_AMOUNT && (
-        <div className="text-red-400 text-center">
-          <p>Not enough coins to spin!</p>
-          <p className="text-sm">You need {BET_AMOUNT} coins per spin</p>
+        <div className="text-red-400 text-center px-4">
+          <p className="text-sm md:text-base">Not enough coins to spin!</p>
+          <p className="text-xs md:text-sm">You need {BET_AMOUNT} coins per spin</p>
         </div>
       )}
 
-      <div className="text-center text-gray-300 text-sm">
-        <p>💎 = 1000 coins | 💰 = 500 coins | ⭐ = 250 coins</p>
-        <p>🎰 = 150 coins | Others = 100 coins | Pairs = 25 coins</p>
+      <div className="text-center text-gray-300 text-xs md:text-sm px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+          <p>💎 = 1000 | 💰 = 500 | ⭐ = 250</p>
+          <p>🎰 = 150 | Others = 100 | Pairs = 25</p>
+        </div>
       </div>
     </div>
   )

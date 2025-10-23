@@ -50,12 +50,12 @@ const games = [
 
 export default function GameLobby({ onSelectGame }: GameLobbyProps) {
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="text-center mb-12">
+    <div className="max-w-6xl mx-auto p-4 md:p-6">
+      <div className="text-center mb-8 md:mb-12">
         <motion.h2
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl font-bold text-yellow-400 mb-4"
+          className="text-3xl md:text-5xl font-bold text-yellow-400 mb-4"
         >
           Welcome to Wreckless Racks Casino! 💸
         </motion.h2>
@@ -63,7 +63,7 @@ export default function GameLobby({ onSelectGame }: GameLobbyProps) {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-xl text-gray-300"
+          className="text-lg md:text-xl text-gray-300"
         >
           Choose your game and start winning big!
         </motion.p>
@@ -81,11 +81,11 @@ export default function GameLobby({ onSelectGame }: GameLobbyProps) {
             className="cursor-pointer"
             onClick={() => onSelectGame(game.id)}
           >
-            <div className={`bg-gradient-to-br ${game.gradient} p-6 rounded-2xl shadow-2xl border border-white/20 hover:border-yellow-400/50 transition-all duration-300`}>
+            <div className={`bg-gradient-to-br ${game.gradient} p-4 md:p-6 rounded-2xl shadow-2xl border border-white/20 hover:border-yellow-400/50 transition-all duration-300 touch-manipulation`}>
               <div className="text-center">
-                <div className="text-6xl mb-4">{game.icon}</div>
-                <h3 className="text-2xl font-bold text-white mb-2">{game.title}</h3>
-                <p className="text-gray-200 mb-4 text-sm">{game.description}</p>
+                <div className="text-4xl md:text-6xl mb-3 md:mb-4">{game.icon}</div>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{game.title}</h3>
+                <p className="text-gray-200 mb-3 md:mb-4 text-sm">{game.description}</p>
 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between items-center">
@@ -99,9 +99,9 @@ export default function GameLobby({ onSelectGame }: GameLobbyProps) {
                 </div>
 
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 md:py-2 px-4 rounded-lg transition-colors touch-manipulation text-sm md:text-base"
                 >
                   Play Now
                 </motion.button>
