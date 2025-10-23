@@ -12,7 +12,11 @@ import UserProfile from '@/components/UserProfile'
 import DailyBonus from '@/components/DailyBonus'
 import Tournament from '@/components/Tournament'
 import AgeVerification from '@/components/AgeVerification'
-import { Coins, User, Trophy, Gift, Home, Plus, Bell, Users } from 'lucide-react'
+import VIPSystem from '@/components/VIPSystem'
+import ChallengesAchievements from '@/components/ChallengesAchievements'
+import SocialSystem from '@/components/SocialSystem'
+import AnalyticsDashboard from '@/components/AnalyticsDashboard'
+import { Coins, User, Trophy, Gift, Home, Plus, Bell, Users, Target, BarChart, Crown } from 'lucide-react'
 
 type GameType = 'lobby' | 'slots' | 'megaslots' | 'blackjack' | 'roulette' | 'poker'
 
@@ -26,6 +30,19 @@ export default function CasinoPage() {
   const [hasUnclaimedBonus, setHasUnclaimedBonus] = useState(true)
   const [isAgeVerified, setIsAgeVerified] = useState(false)
   const [showAgeVerification, setShowAgeVerification] = useState(false)
+  const [showChallenges, setShowChallenges] = useState(false)
+  const [showSocial, setShowSocial] = useState(false)
+  const [showAnalytics, setShowAnalytics] = useState(false)
+  const [totalWagered, setTotalWagered] = useState(125000)
+  const [gameStats, setGameStats] = useState({
+    slotsPlayed: 23,
+    blackjackWins: 8,
+    rouletteSpins: 15,
+    pokerHands: 12,
+    totalWagered: 125000,
+    biggestWin: 15000,
+    loginStreak: 3
+  })
 
   useEffect(() => {
     // Check if user has already been age verified
@@ -141,6 +158,20 @@ export default function CasinoPage() {
 
             <div className="flex gap-2">
               <button
+                onClick={() => setShowChallenges(true)}
+                className="p-2 bg-yellow-600 hover:bg-yellow-700 rounded-full text-white transition-colors"
+              >
+                <Target size={18} />
+              </button>
+
+              <button
+                onClick={() => setShowSocial(true)}
+                className="p-2 bg-green-600 hover:bg-green-700 rounded-full text-white transition-colors"
+              >
+                <Users size={18} />
+              </button>
+
+              <button
                 onClick={() => setShowTournament(true)}
                 className="p-2 bg-purple-600 hover:bg-purple-700 rounded-full text-white transition-colors"
               >
@@ -155,11 +186,6 @@ export default function CasinoPage() {
                 {hasUnclaimedBonus && (
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
                 )}
-              </button>
-
-              <button className="p-2 bg-orange-600 hover:bg-orange-700 rounded-full text-white transition-colors relative">
-                <Bell size={18} />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
               </button>
             </div>
           </div>
@@ -199,6 +225,20 @@ export default function CasinoPage() {
             </div>
 
             <button
+              onClick={() => setShowChallenges(true)}
+              className="p-2 bg-yellow-600 hover:bg-yellow-700 rounded-full text-white transition-colors"
+            >
+              <Target size={20} />
+            </button>
+
+            <button
+              onClick={() => setShowSocial(true)}
+              className="p-2 bg-green-600 hover:bg-green-700 rounded-full text-white transition-colors"
+            >
+              <Users size={20} />
+            </button>
+
+            <button
               onClick={() => setShowProfile(true)}
               className="p-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white transition-colors"
             >
@@ -222,15 +262,22 @@ export default function CasinoPage() {
               )}
             </button>
 
-            <button className="p-2 bg-orange-600 hover:bg-orange-700 rounded-full text-white transition-colors relative">
-              <Bell size={20} />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+            <button
+              onClick={() => setShowAnalytics(true)}
+              className="p-2 bg-indigo-600 hover:bg-indigo-700 rounded-full text-white transition-colors"
+            >
+              <BarChart size={20} />
             </button>
           </div>
         </div>
       </header>
 
       <main className="p-4">
+        <VIPSystem
+          coins={coins}
+          totalWagered={totalWagered}
+          onCoinsUpdate={setCoins}
+        />
         {renderGame()}
       </main>
 
@@ -262,6 +309,31 @@ export default function CasinoPage() {
         onClose={() => setShowTournament(false)}
         coins={coins}
         setCoins={setCoins}
+      />
+
+      <ChallengesAchievements
+        isOpen={showChallenges}
+        onClose={() => setShowChallenges(false)}
+        coins={coins}
+        onCoinsUpdate={setCoins}
+        gameStats={gameStats}
+      />
+
+      <SocialSystem
+        isOpen={showSocial}
+        onClose={() => setShowSocial(false)}
+        currentUser={{
+          id: 'current_user',
+          username: 'WrecklessPlayer',
+          coins: coins,
+          totalWins: gameStats.blackjackWins + Math.floor(gameStats.slotsPlayed / 3)
+        }}
+      />
+
+      <AnalyticsDashboard
+        isOpen={showAnalytics}
+        onClose={() => setShowAnalytics(false)}
+        userRole="owner"
       />
     </div>
   )
