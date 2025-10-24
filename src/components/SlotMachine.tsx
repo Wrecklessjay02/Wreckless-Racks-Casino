@@ -4,8 +4,9 @@ import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, Share2 } from 'lucide-react'
 import SocialShare from './SocialShare'
+import SlotSymbol, { ENHANCED_SYMBOLS } from './SlotSymbols'
 
-const SYMBOLS = ['🍒', '🍋', '🍊', '🍇', '⭐', '💎', '🎰', '💰']
+const SYMBOLS = ENHANCED_SYMBOLS
 const REEL_COUNT = 3
 const BET_AMOUNT = 50
 
@@ -27,12 +28,23 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
     if (results[0] === results[1] && results[1] === results[2]) {
       const symbol = results[0]
       switch (symbol) {
-        case '💎': return 1000
-        case '💰': return 500
-        case '⭐': return 250
-        case '🎰': return 150
+        case 'jackpot': return 2500
+        case 'diamond': return 1000
+        case 'wild': return 750
+        case 'seven': return 500
+        case 'star': return 250
+        case 'bar': return 150
         default: return 100
       }
+    }
+
+    // Special wild card matching
+    const wildCount = results.filter(r => r === 'wild').length
+    if (wildCount >= 2) {
+      return 500
+    }
+    if (wildCount === 1) {
+      return 150
     }
 
     if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
@@ -68,14 +80,12 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
     setIsSpinning(false)
   }, [isSpinning, coins, checkWin, setCoins])
 
-  const getSymbolVariant = (symbol: string) => {
-    switch (symbol) {
-      case '💎': return 'bg-gradient-to-br from-blue-400 to-purple-600'
-      case '💰': return 'bg-gradient-to-br from-yellow-400 to-orange-500'
-      case '⭐': return 'bg-gradient-to-br from-yellow-300 to-yellow-600'
-      case '🎰': return 'bg-gradient-to-br from-red-400 to-pink-600'
-      default: return 'bg-gradient-to-br from-green-400 to-blue-500'
-    }
+  const isWinningSymbol = (symbol: string, index: number) => {
+    return lastWin > 0 && (
+      (reels[0] === reels[1] && reels[1] === reels[2]) ||
+      symbol === 'wild' ||
+      (lastWin >= 500 && symbol === 'jackpot')
+    )
   }
 
   return (
@@ -89,17 +99,15 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
         {reels.map((symbol, index) => (
           <motion.div
             key={index}
-            className={`w-16 h-16 md:w-24 md:h-24 flex items-center justify-center text-2xl md:text-4xl rounded-xl border-2 border-white/20 ${getSymbolVariant(symbol)}`}
             animate={isSpinning ? { rotateY: [0, 360] } : {}}
             transition={{ duration: 0.1, repeat: isSpinning ? Infinity : 0 }}
           >
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            >
-              {symbol}
-            </motion.span>
+            <SlotSymbol
+              symbol={symbol}
+              size="large"
+              isWinning={isWinningSymbol(symbol, index)}
+              className={isSpinning ? 'blur-sm' : ''}
+            />
           </motion.div>
         ))}
       </div>
@@ -157,9 +165,11 @@ export default function SlotMachine({ coins, setCoins }: SlotMachineProps) {
       )}
 
       <div className="text-center text-gray-300 text-xs md:text-sm px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
-          <p>💎 = 1000 | 💰 = 500 | ⭐ = 250</p>
-          <p>🎰 = 150 | Others = 100 | Pairs = 25</p>
+        <div className="space-y-1">
+          <p>👑 JACKPOT = 2500 | 💎 DIAMOND = 1000 | WILD = 750</p>
+          <p>7 SEVEN = 500 | ⭐ STAR = 250 | BAR = 150</p>
+          <p>🍒🍋🍊🍇 FRUITS = 100 | Any Pairs = 25</p>
+          <p className="text-yellow-400">WILD substitutes for any symbol!</p>
         </div>
       </div>
 
