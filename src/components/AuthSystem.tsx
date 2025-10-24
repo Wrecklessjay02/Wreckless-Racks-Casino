@@ -151,7 +151,7 @@ export default function AuthSystem({ isOpen, onClose, onAuthSuccess }: AuthSyste
         user.lastLogin = new Date().toISOString()
         const updatedUsers = existingUsers.map((u: any) => u.id === user.id ? user : u)
         localStorage.setItem('wreckless_racks_users', JSON.stringify(updatedUsers))
-        localStorage.setItem('wreckless_racks_current_user', JSON.stringify(user))
+        // Don't set current user here - let UserContext handle it with session tokens
 
         onAuthSuccess(user)
         onClose()
@@ -288,7 +288,7 @@ export default function AuthSystem({ isOpen, onClose, onAuthSuccess }: AuthSyste
       // Save user
       const updatedUsers = [...existingUsers, { ...newUser, password: registerData.password }]
       localStorage.setItem('wreckless_racks_users', JSON.stringify(updatedUsers))
-      localStorage.setItem('wreckless_racks_current_user', JSON.stringify(newUser))
+      // Don't set current user here - let UserContext handle it with session tokens
 
       setSuccess('Account created successfully! Welcome to Wreckless Racks Casino!')
       setTimeout(() => {

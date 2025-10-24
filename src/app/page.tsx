@@ -26,7 +26,7 @@ import { Coins, User, Trophy, Gift, Home, Plus, Bell, Users, Target, BarChart, C
 type GameType = 'lobby' | 'slots' | 'megaslots' | 'blackjack' | 'roulette' | 'poker'
 
 function CasinoContent() {
-  const { user, isAuthenticated, logout, updateCoins, updateGameStats, updateTotalWagered } = useUser()
+  const { user, isAuthenticated, login, logout, updateCoins, updateGameStats, updateTotalWagered } = useUser()
   const [currentGame, setCurrentGame] = useState<GameType>('lobby')
   const [showStore, setShowStore] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
@@ -125,6 +125,8 @@ function CasinoContent() {
           isOpen={showAuth}
           onClose={() => setShowAuth(false)}
           onAuthSuccess={(newUser) => {
+            console.log('Page: Auth successful, logging in user:', newUser.username)
+            login(newUser) // Use UserContext login function to create session
             setShowAuth(false)
           }}
         />
