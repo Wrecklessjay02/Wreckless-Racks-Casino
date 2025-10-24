@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { loadStripe } from '@stripe/stripe-js'
 import {
   X,
   CreditCard,
@@ -12,6 +13,9 @@ import {
   AlertCircle,
   ArrowLeft
 } from 'lucide-react'
+
+// Initialize Stripe
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51Example...')
 
 interface PaymentProcessorProps {
   isOpen: boolean
@@ -37,6 +41,8 @@ export default function PaymentProcessor({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
   const [currentStep, setCurrentStep] = useState<PaymentStep>('method')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [clientSecret, setClientSecret] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [formData, setFormData] = useState({
     cardNumber: '',
     expiryDate: '',
@@ -45,6 +51,38 @@ export default function PaymentProcessor({
     email: '',
     zipCode: ''
   })
+
+  // Create payment intent when component opens
+  useEffect(() => {
+    if (isOpen && packageData) {
+      createPaymentIntent()
+    }
+  }, [isOpen, packageData])
+
+  const createPaymentIntent = async () => {
+    try {
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          packageId: packageData?.id,
+          userId: 'demo_user_' + Date.now() // In production, get from auth context
+        })
+      })
+
+      const data = await response.json()
+      if (data.clientSecret) {
+        setClientSecret(data.clientSecret)
+      } else {
+        setErrorMessage('Failed to initialize payment')
+      }
+    } catch (error) {
+      console.error('Payment intent creation failed:', error)
+      setErrorMessage('Failed to initialize payment')
+    }
+  }
 
   const paymentMethods = [
     {
@@ -89,29 +127,53 @@ export default function PaymentProcessor({
   const processDigitalWalletPayment = async (method: PaymentMethod) => {
     setCurrentStep('processing')
     setIsProcessing(true)
+    setErrorMessage('')
 
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    try {
+      if (method === 'apple' || method === 'google') {
+        // For demo purposes, simulate digital wallet payments
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        const totalCoins = (packageData?.coins || 0) + (packageData?.bonus || 0)
+        onSuccess(totalCoins)
+        setCurrentStep('success')
+      } else {
+        setErrorMessage('Payment method not yet implemented')
+        setCurrentStep('error')
+      }
+    } catch (error) {
+      setErrorMessage('Payment processing failed')
+      setCurrentStep('error')
+    }
 
-    // Simulate success (in real implementation, this would be actual payment processing)
-    const totalCoins = (packageData?.coins || 0) + (packageData?.bonus || 0)
-    onSuccess(totalCoins)
-    setCurrentStep('success')
     setIsProcessing(false)
   }
 
   const handleCardPayment = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!clientSecret) {
+      setErrorMessage('Payment not initialized. Please try again.')
+      setCurrentStep('error')
+      return
+    }
+
     setCurrentStep('processing')
     setIsProcessing(true)
+    setErrorMessage('')
 
-    // Simulate card payment processing
-    await new Promise(resolve => setTimeout(resolve, 3000))
+    try {
+      // For demo purposes, we'll simulate successful payment
+      // In production, use Stripe Elements for secure card processing
+      await new Promise(resolve => setTimeout(resolve, 3000))
 
-    // Simulate success
-    const totalCoins = (packageData?.coins || 0) + (packageData?.bonus || 0)
-    onSuccess(totalCoins)
-    setCurrentStep('success')
+      const totalCoins = (packageData?.coins || 0) + (packageData?.bonus || 0)
+      onSuccess(totalCoins)
+      setCurrentStep('success')
+    } catch (error) {
+      console.error('Payment error:', error)
+      setErrorMessage('Payment processing failed. Please try again.')
+      setCurrentStep('error')
+    }
+
     setIsProcessing(false)
   }
 
@@ -380,6 +442,46 @@ export default function PaymentProcessor({
               >
                 Continue Playing
               </button>
+            </motion.div>
+          )}
+
+          {/* Error */}
+          {currentStep === 'error' && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="text-center py-8"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4"
+              >
+                <AlertCircle className="text-white" size={32} />
+              </motion.div>
+              <h4 className="text-2xl font-bold text-red-400 mb-2">Payment Failed</h4>
+              <p className="text-gray-300 mb-4">
+                {errorMessage || 'Something went wrong with your payment. Please try again.'}
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setCurrentStep('method')
+                    setErrorMessage('')
+                  }}
+                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold rounded-lg transition-all"
+                >
+                  Try Again
+                </button>
+                <button
+                  onClick={onClose}
+                  className="w-full py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-all"
+                >
+                  Close
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
