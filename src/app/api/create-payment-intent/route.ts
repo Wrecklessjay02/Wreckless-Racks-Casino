@@ -1,13 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-})
+// Initialize Stripe with error handling
+let stripe: Stripe | null = null
+try {
+  if (process.env.STRIPE_SECRET_KEY) {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-12-18.acacia',
+    })
+  }
+} catch (error) {
+  console.error('Failed to initialize Stripe:', error)
+}
 
 export async function POST(request: NextRequest) {
   try {
     const { packageId, userId } = await request.json()
+
+    // Check if Stripe is initialized
+    if (!stripe) {
+      console.error('Stripe not initialized - missing STRIPE_SECRET_KEY')
+      return NextResponse.json({
+        error: 'Payment system unavailable',
+        clientSecret: 'demo_mode'
+      }, { status: 503 })
+    }
 
     // Define coin packages (should match your frontend)
     const packages = {
