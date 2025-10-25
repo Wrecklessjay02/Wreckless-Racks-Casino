@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { loadStripe } from '@stripe/stripe-js'
+// import { loadStripe } from '@stripe/stripe-js'
 import {
   X,
   CreditCard,
@@ -14,10 +14,11 @@ import {
   ArrowLeft
 } from 'lucide-react'
 
-// Initialize Stripe with error handling
-const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-  : Promise.resolve(null)
+// Initialize Stripe with error handling - temporarily disabled
+// const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+//   ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+//   : Promise.resolve(null)
+const stripePromise = Promise.resolve(null)
 
 interface PaymentProcessorProps {
   isOpen: boolean
