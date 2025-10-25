@@ -162,7 +162,7 @@ function CasinoContent() {
                 {user?.coins.toLocaleString()}
               </div>
               <button
-                onClick={() => setShowStore(true)}
+                onClick={() => alert('💰 Coin store coming soon! Keep playing to earn more coins!')}
                 className="p-1.5 bg-green-600 hover:bg-green-700 rounded-full text-white transition-colors"
               >
                 <Plus size={16} />
@@ -264,7 +264,7 @@ function CasinoContent() {
                 {user?.coins.toLocaleString()}
               </div>
               <button
-                onClick={() => setShowStore(true)}
+                onClick={() => alert('💰 Coin store coming soon! Keep playing to earn more coins!')}
                 className="p-2 bg-green-600 hover:bg-green-700 rounded-full text-white transition-colors relative"
               >
                 <Plus size={20} />
