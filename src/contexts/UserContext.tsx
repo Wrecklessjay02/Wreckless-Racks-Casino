@@ -36,19 +36,21 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   useEffect(() => {
     console.log('UserContext: Checking authentication status...')
 
-    // One-time migration: Clear old data without session system
-    const migrationKey = 'wreckless_racks_auth_migration_v2'
+    // One-time migration: Only run once to clear old data without session system
+    const migrationKey = 'wreckless_racks_auth_migration_v3'
     if (!localStorage.getItem(migrationKey)) {
-      console.log('UserContext: Running authentication migration - clearing old data')
-      const keysToRemove = ['wreckless_racks_current_user', 'wreckless_racks_users', 'wreckless_racks_session_token', 'wreckless_racks_session_expiry']
-      keysToRemove.forEach(key => {
-        if (localStorage.getItem(key)) {
-          console.log('UserContext: Removing old data:', key)
-          localStorage.removeItem(key)
-        }
-      })
+      console.log('UserContext: Running one-time authentication migration')
+      // Only clear if there's user data but no session tokens (old system)
+      const hasOldUser = localStorage.getItem('wreckless_racks_current_user')
+      const hasSessionToken = localStorage.getItem('wreckless_racks_session_token')
+
+      if (hasOldUser && !hasSessionToken) {
+        console.log('UserContext: Clearing old user data without session tokens')
+        localStorage.removeItem('wreckless_racks_current_user')
+      }
+
       localStorage.setItem(migrationKey, 'completed')
-      console.log('UserContext: Migration completed - users will need to re-authenticate')
+      console.log('UserContext: Migration completed')
     }
 
     const savedUser = localStorage.getItem('wreckless_racks_current_user')
