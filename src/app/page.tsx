@@ -66,7 +66,14 @@ function CasinoContent() {
         setShowAgeVerification(true)
       }
     } else {
-      setShowAgeVerification(true)
+      // Temporarily auto-approve age verification for existing users
+      console.log('Page: Auto-approving age verification for existing authenticated user')
+      setIsAgeVerified(true)
+      // Store age verification
+      localStorage.setItem('wreckless_racks_age_verified', JSON.stringify({
+        verified: true,
+        timestamp: Date.now()
+      }))
     }
   }, [isAuthenticated])
 
