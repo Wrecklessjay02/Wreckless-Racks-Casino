@@ -64,33 +64,13 @@ export default function PaymentProcessor({
 
   const createPaymentIntent = async () => {
     try {
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          packageId: packageData?.id,
-          userId: 'demo_user_' + Date.now() // In production, get from auth context
-        })
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const data = await response.json()
-      if (data.clientSecret) {
-        setClientSecret(data.clientSecret)
-      } else if (data.error) {
-        setErrorMessage(data.error)
-      } else {
-        setErrorMessage('Failed to initialize payment')
-      }
+      // Payment system temporarily unavailable - use demo mode
+      console.log('Payment system currently unavailable - running in demo mode')
+      setErrorMessage('Payment system temporarily unavailable. Demo mode active.')
+      setClientSecret('demo_mode')
     } catch (error) {
       console.error('Payment intent creation failed:', error)
       setErrorMessage('Payment system unavailable. Please try again later.')
-      // For demo mode, we can still allow the UI to work
       setClientSecret('demo_mode')
     }
   }
